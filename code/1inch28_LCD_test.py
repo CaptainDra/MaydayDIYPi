@@ -68,14 +68,24 @@ try:
         imageName = 'xinbase'
         sec = 0.2
         for i in range(5):
-            imageLoc = '../pic/' + imageName + 'D' + str(i) + 'png'
+            imageLoc = '../pic/' + imageName + 'D' + str(i) + '.png'
             image = Image.open(imageLoc)
             disp.ShowImage(image)
             time.sleep(sec)
             if(i >= 2):
                 sec = sec * 5
             else:
-                sec = sec * 0.2xm
+                sec = sec * 0.2
+        sec = 0.2
+        for i in range(5):
+            imageLoc = '../pic/' + imageName + 'D' + str(4-i) + '.png'
+            image = Image.open(imageLoc)
+            disp.ShowImage(image)
+            time.sleep(sec)
+            if(i >= 2):
+                sec = sec * 5
+            else:
+                sec = sec * 0.2
         count += 1
     logging.info("show image1")
     image = Image.open('../pic/xinbase.png')
