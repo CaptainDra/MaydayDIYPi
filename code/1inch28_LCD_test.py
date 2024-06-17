@@ -65,33 +65,43 @@ try:
     time.sleep(3)
     count = 0
     while(count < 100):
-        logging.info("show image1")
-        image = Image.open('../pic/xinbase.png')
-        im_r = image.rotate(180)
-        disp.ShowImage(im_r)
-        time.sleep(3)
-        logging.info("show image1")
-        image = Image.open('../pic/xinbaseD0.png')
-        im_r = image.rotate(180)
-        disp.ShowImage(im_r)
-        time.sleep(3)
-        logging.info("show image1")
-        image = Image.open('../pic/xinbaseD1.png')
-        im_r = image.rotate(180)
-        disp.ShowImage(im_r)
-        time.sleep(3)
-        logging.info("show image1")
-        image = Image.open('../pic/xinbaseD2.png')
-        im_r = image.rotate(180)
-        disp.ShowImage(im_r)
-        time.sleep(3)
-        logging.info("show image1")
-        image = Image.open('../pic/xinbaseD3.png')
-        im_r = image.rotate(180)
-        disp.ShowImage(im_r)
-        time.sleep(3)
+        imageName = 'xinbase'
+        sec = 0.2
+        for i in range(5):
+            imageLoc = '../pic/' + imageName + 'D' + str(i) + 'png'
+            image = Image.open(imageLoc)
+            disp.ShowImage(image)
+            time.sleep(sec)
+            if(i >= 2):
+                sec = sec * 5
+            else:
+                sec = sec * 0.2xm
         count += 1
-
+    logging.info("show image1")
+    image = Image.open('../pic/xinbase.png')
+    im_r = image.rotate(180)
+    disp.ShowImage(im_r)
+    time.sleep(3)
+    logging.info("show image1")
+    image = Image.open('../pic/xinbaseD0.png')
+    im_r = image.rotate(180)
+    disp.ShowImage(im_r)
+    time.sleep(3)
+    logging.info("show image1")
+    image = Image.open('../pic/xinbaseD1.png')
+    im_r = image.rotate(180)
+    disp.ShowImage(im_r)
+    time.sleep(3)
+    logging.info("show image1")
+    image = Image.open('../pic/xinbaseD2.png')
+    im_r = image.rotate(180)
+    disp.ShowImage(im_r)
+    time.sleep(3)
+    logging.info("show image1")
+    image = Image.open('../pic/xinbaseD3.png')
+    im_r = image.rotate(180)
+    disp.ShowImage(im_r)
+    time.sleep(3)
     disp.module_exit()
     logging.info("quit:")
 except IOError as e:
