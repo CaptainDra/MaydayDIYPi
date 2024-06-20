@@ -6,9 +6,9 @@
 USB音响 * 1（未来可能会用上）
 
 ## 使用    
-'''
-git clone
-'''
+```
+  git clone https://github.com/CaptainDra/MaydayFansDemo.git
+​```
 
 一个五月天相关的树莓派实验品
 目前进度：粉色球球可以做匀速运动
