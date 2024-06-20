@@ -41,7 +41,9 @@ class screenPlayer():
         except IOError as e:
             logging.info(e)
 
-
+    def module_exit(self):
+        self.disp.module_exit()
+        logging.info("quit:")
 
 
     '''A basic screen player， for a pink ball up and down'''
@@ -52,7 +54,7 @@ class screenPlayer():
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(i)
-                    self.screenPlayer('xin','base',state)
+                    self.screenPlayer('Ashin','base',state)
                     time.sleep(sec)
                     if (i >= 2):
                        sec = sec * 5
@@ -61,16 +63,13 @@ class screenPlayer():
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(4-i)
-                    self.screenPlayer('xin', 'base', state)
+                    self.screenPlayer('Ashin', 'base', state)
                     time.sleep(sec)
                     if (i >= 2):
                         sec = sec * 5
                     else:
                         sec = sec * 0.2
                 count += 1
-
-            self.disp.module_exit()
-            logging.info("quit:")
         except IOError as e:
             logging.info(e)
         except KeyboardInterrupt:
@@ -82,3 +81,4 @@ class screenPlayer():
 
 s = screenPlayer()
 s.screenController()
+s.module_exit()
