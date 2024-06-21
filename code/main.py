@@ -116,10 +116,12 @@ class controller():
         while True:
             state_set = GPIO.input(self.button_set)
             state_mid = GPIO.input(self.button_mid)
-            if state_set == True:
-                break;
+
             if state_mid == True:
                 logging.info('mid')
+            if state_set == True:
+                logging.info('set')
+            time.sleep(0.1)
 
 
 
@@ -130,17 +132,16 @@ if __name__ == "__main__":
 
     m = musicPlayer()
     m.musicPlayer('../music/五月天 - 你说那 C 和弦就是....mp3')
-    time.sleep(20)
+    time.sleep(2)
     m.musicStop()
-
+    st = '../music/五月天 - 你说那 C 和弦就是....mp3'
     screenController_thread = threading.Thread(target=s.screenController, args=())
-    musicPlayer_thread = threading.Thread(target=m.musicPlayer, args=('../music/五月天 - 你说那 C 和弦就是....mp3'))
+    musicPlayer_thread = threading.Thread(target=m.musicPlayer, args=(st,))
     screenController_thread.start()
     musicPlayer_thread.start()
-    time.sleep(20)
+    time.sleep(5)
     s.count = 100
     m.isStop = True
     m.musicStop()
-    logging.info(screenController_thread.isAlive())
     c = controller()
-    controller_thread = threading.Thread(target=c.controllerThread,args=())
+    c.controllerThread()
