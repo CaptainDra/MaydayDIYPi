@@ -5,6 +5,7 @@ import time
 import logging
 import spidev as SPI
 import pygame
+import threading
 
 sys.path.append("..")
 from lib import LCD_1inch28
@@ -18,6 +19,7 @@ class screenPlayer():
         BL = 18
         bus = 0
         device = 0
+        self.count = 0
         logging.basicConfig(level=logging.DEBUG)
         # display with hardware SPI:
         ''' Warning!!!Don't  creation of multiple displayer objects!!! '''
@@ -50,8 +52,8 @@ class screenPlayer():
     '''A basic screen player， for a pink ball up and down'''
     def screenController(self):
         try:
-            count = 0
-            while (count < 100):
+
+            while (self.count < 100):
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(i)
@@ -70,7 +72,7 @@ class screenPlayer():
                         sec = sec * 5
                     else:
                         sec = sec * 0.2
-                count += 1
+                self.count += 1
         except IOError as e:
             logging.info(e)
         except KeyboardInterrupt:
@@ -80,6 +82,7 @@ class screenPlayer():
 
 class musicPlayer():
     def __init__(self):
+        self.isStop = False
         pygame.mixer.init()
 
     def musicPlayer(self, music):
@@ -89,11 +92,24 @@ class musicPlayer():
     def musicStop(self):
         pygame.mixer.music.stop()
 
-s = screenPlayer()
-s.screenController()
-s.module_exit()
 
-m = musicPlayer()
-m.musicPlayer('../music/五月天 - 你说那 C 和弦就是....mp3')
-time.sleep(20)
-m.musicStop()
+if __name__ == "__main__":
+    s = screenPlayer()
+    s.screenController()
+    s.module_exit()
+
+    m = musicPlayer()
+    m.musicPlayer('../music/五月天 - 你说那 C 和弦就是....mp3')
+    time.sleep(20)
+    m.musicStop()
+
+    screenController_thread = threading.Thread(target=s.screenController, args=())
+    musicPlayer_thread = threading.Thread(target=m.musicPlayer, args=('../music/五月天 - 你说那 C 和弦就是....mp3'))
+    screenController_thread.start()
+    musicPlayer_thread.start()
+    time.sleep(20)
+    s.count = 100
+    m.isStop = True
+    m.musicStop()
+    logging.info(screenController_thread.isAlive())
+    while(s.disp.digital_read())
