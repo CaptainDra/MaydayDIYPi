@@ -4,6 +4,7 @@ import sys
 import time
 import logging
 import spidev as SPI
+import pygame
 
 sys.path.append("..")
 from lib import LCD_1inch28
@@ -77,7 +78,16 @@ class screenPlayer():
             logging.info("quit:")
             exit()
 
+class musicPlayer():
+    def __init__(self):
+        pygame.mixer.init()
 
+    def musicPlayer(self, music):
+        pygame.mixer.music.load(music)
+        pygame.mixer.music.play()
+
+    def musicStop(self):
+        pygame.mixer.music.stop()
 
 s = screenPlayer()
 s.screenController()
