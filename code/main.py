@@ -112,4 +112,3 @@ if __name__ == "__main__":
     m.isStop = True
     m.musicStop()
     logging.info(screenController_thread.isAlive())
-    while(s.disp.digital_read())
