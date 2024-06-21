@@ -6,6 +6,8 @@ import logging
 import spidev as SPI
 import pygame
 import threading
+import RPi.GPIO as GPIO
+
 
 sys.path.append("..")
 from lib import LCD_1inch28
@@ -92,6 +94,34 @@ class musicPlayer():
     def musicStop(self):
         pygame.mixer.music.stop()
 
+class controller():
+    def __init__(self):
+        GPIO.setmode(GPIO.BCM)
+        self.button_up = 21
+        self.button_down = 20
+        self.button_lift = 16
+        self.button_right = 26
+        self.button_mid = 19
+        self.button_set = 13
+        self.button_rst = 6
+        GPIO.setup(self.button_mid, GPIO.IN)
+        GPIO.setup(self.button_down, GPIO.IN)
+        GPIO.setup(self.button_up, GPIO.IN)
+        GPIO.setup(self.button_lift, GPIO.IN)
+        GPIO.setup(self.button_right, GPIO.IN)
+        GPIO.setup(self.button_set, GPIO.IN)
+        GPIO.setup(self.button_rst, GPIO.IN)
+
+    def controllerThread(self):
+        while True:
+            state_set = GPIO.input(self.button_set)
+            state_mid = GPIO.input(self.button_mid)
+            if state_set == True:
+                break;
+            if state_mid == True:
+                logging.info('mid')
+
+
 
 if __name__ == "__main__":
     s = screenPlayer()
@@ -112,3 +142,5 @@ if __name__ == "__main__":
     m.isStop = True
     m.musicStop()
     logging.info(screenController_thread.isAlive())
+    c = controller()
+    controller_thread = threading.Thread(target=c.controllerThread,args=())
