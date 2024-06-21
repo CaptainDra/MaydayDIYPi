@@ -92,3 +92,8 @@ class musicPlayer():
 s = screenPlayer()
 s.screenController()
 s.module_exit()
+
+m = musicPlayer()
+m.musicPlayer('../music/五月天 - 你说那 C 和弦就是....mp3')
+time.sleep(20)
+m.musicStop()
