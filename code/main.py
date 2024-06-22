@@ -111,17 +111,34 @@ class controller():
         GPIO.setup(self.button_right, GPIO.IN)
         GPIO.setup(self.button_set, GPIO.IN)
         GPIO.setup(self.button_rst, GPIO.IN)
+        GPIO.add_event_detect(self.button_up, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_down, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_lift, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_right, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_mid, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_set, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_rst, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
 
     def controllerThread(self):
         while True:
-            state_set = GPIO.input(self.button_set)
-            state_mid = GPIO.input(self.button_mid)
+           continue
 
-            if state_mid == True:
-                logging.info('mid')
-            if state_set == True:
-                logging.info('set')
-            time.sleep(0.1)
+    def keyCallback(self,key):
+        if key == self.button_up:
+            print('up')
+        elif key == self.button_down:
+            print('down')
+        elif key == self.button_lift:
+            print('lift')
+        elif key == self.button_right:
+            print('right')
+        elif key == self.button_mid:
+            print('mid')
+        elif key == self.button_set:
+            print('set')
+        elif key == self.button_rst:
+            sys.exit()
+
 
 
 
@@ -144,4 +161,4 @@ if __name__ == "__main__":
     m.isStop = True
     m.musicStop()
     c = controller()
-    c.controllerThread()
+    controller_thread = threading.Thread(target=c.controllerThread(),args=())
