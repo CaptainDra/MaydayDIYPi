@@ -13,6 +13,12 @@ sys.path.append("..")
 from lib import LCD_1inch28
 from PIL import Image,ImageDraw,ImageFont
 
+character = 0
+
+def changeCharacter():
+    global character
+    character = (character + 1) % 2
+
 class screenPlayer():
     def __init__(self):
         # Raspberry Pi pin configuration:
@@ -37,6 +43,7 @@ class screenPlayer():
         # Create blank image for drawing.
         image1 = Image.new("RGB", (self.disp.width,self.disp.height), "BLACK")
         draw = ImageDraw.Draw(image1)
+        self.ball = ['Ashin','Masa']
 
     def screenPlayer(self, character, mov, state):
         try:
@@ -59,7 +66,7 @@ class screenPlayer():
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(i)
-                    self.screenPlayer('Ashin','base',state)
+                    self.screenPlayer(self.ball[character],'base',state)
                     time.sleep(sec)
                     if (i >= 2):
                        sec = sec * 5
@@ -68,7 +75,7 @@ class screenPlayer():
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(4-i)
-                    self.screenPlayer('Ashin', 'base', state)
+                    self.screenPlayer(self.ball[character], 'base', state)
                     time.sleep(sec)
                     if (i >= 2):
                         sec = sec * 5
@@ -100,24 +107,24 @@ class controller():
         self.button_up = 21
         self.button_down = 20
         self.button_lift = 16
-        self.button_right = 26
-        self.button_mid = 19
-        self.button_set = 13
-        self.button_rst = 6
-        GPIO.setup(self.button_mid, GPIO.IN)
-        GPIO.setup(self.button_down, GPIO.IN)
-        GPIO.setup(self.button_up, GPIO.IN)
-        GPIO.setup(self.button_lift, GPIO.IN)
-        GPIO.setup(self.button_right, GPIO.IN)
-        GPIO.setup(self.button_set, GPIO.IN)
-        GPIO.setup(self.button_rst, GPIO.IN)
-        GPIO.add_event_detect(self.button_up, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
-        GPIO.add_event_detect(self.button_down, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
-        GPIO.add_event_detect(self.button_lift, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
-        GPIO.add_event_detect(self.button_right, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
-        GPIO.add_event_detect(self.button_mid, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
-        GPIO.add_event_detect(self.button_set, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
-        GPIO.add_event_detect(self.button_rst, GPIO.RISING, callback=self.keyCallback, bouncetime=200)
+        self.button_right = 19
+        self.button_mid = 13
+        self.button_set = 6
+        self.button_rst = 5
+        GPIO.setup(self.button_mid, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.button_down, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.button_up, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.button_lift, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.button_right, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.button_set, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.button_rst, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(self.button_up, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_down, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_lift, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_right, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_mid, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_set, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_rst, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
 
     def controllerThread(self):
         while True:
@@ -133,32 +140,40 @@ class controller():
         elif key == self.button_right:
             print('right')
         elif key == self.button_mid:
+            changeCharacter()
             print('mid')
         elif key == self.button_set:
             print('set')
         elif key == self.button_rst:
-            sys.exit()
+            print('rst')
+        
+        time.sleep(1)
 
 
 
 
 if __name__ == "__main__":
+    
+    c = controller()
     s = screenPlayer()
-    s.screenController()
-    s.module_exit()
+    '''s.screenController()'''
+    '''s.module_exit()'''
 
     m = musicPlayer()
-    m.musicPlayer('../music/五月天 - 你说那 C 和弦就是....mp3')
+    '''m.musicPlayer('../music/五月天 - 你说那 C 和弦就是....mp3')
     time.sleep(2)
-    m.musicStop()
+    m.musicStop()'''
     st = '../music/五月天 - 你说那 C 和弦就是....mp3'
+    s.count = 0
     screenController_thread = threading.Thread(target=s.screenController, args=())
     musicPlayer_thread = threading.Thread(target=m.musicPlayer, args=(st,))
+    controller_thread = threading.Thread(target=c.controllerThread,args=())
+    controller_thread.start()
     screenController_thread.start()
     musicPlayer_thread.start()
-    time.sleep(5)
+    time.sleep(100)
     s.count = 100
     m.isStop = True
     m.musicStop()
-    c = controller()
-    controller_thread = threading.Thread(target=c.controllerThread(),args=())
+    
+    
