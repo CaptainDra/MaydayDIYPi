@@ -17,7 +17,7 @@ character = 0
 
 def changeCharacter():
     global character
-    character = (character + 1) % 2
+    character = (character + 1) % 3
 
 class screenPlayer():
     def __init__(self):
@@ -43,7 +43,7 @@ class screenPlayer():
         # Create blank image for drawing.
         image1 = Image.new("RGB", (self.disp.width,self.disp.height), "BLACK")
         draw = ImageDraw.Draw(image1)
-        self.ball = ['Ashin','Masa']
+        self.ball = ['Ashin','Masa','Monster']
 
     def screenPlayer(self, character, mov, state):
         try:
