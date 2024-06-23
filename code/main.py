@@ -91,6 +91,8 @@ class screenPlayer():
                         sec = sec * 5
                     else:
                         sec = sec * 0.2
+
+                print(count)
                 count += 1
         except IOError as e:
             logging.info(e)
@@ -108,8 +110,6 @@ class musicPlayer():
     def musicPlayer(self, music):
         pygame.mixer.music.load(music)
         pygame.mixer.music.play()
-
-    def musicStop(self):
         while True:
             if musicIsStop == False:
                 pygame.mixer.music.stop()
@@ -160,6 +160,7 @@ class controller():
         elif key == self.button_set:
             global count
             count = -100
+            print(count)
             global musicIsStop
             musicIsStop = False
             print('set')
