@@ -1,4 +1,4 @@
-#import chardet
+# import chardet
 import os
 import sys
 import time
@@ -8,23 +8,26 @@ import pygame
 import threading
 import RPi.GPIO as GPIO
 
-
 sys.path.append("..")
 from lib import LCD_1inch28
-from PIL import Image,ImageDraw,ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
 character = 2
 count = 0
-musicIsStop = False
+musicSwitch = False
+
+
 # 切换角色 右移一位
 def changeRightCharacter():
     global character
     character = (character + 1) % 5
 
+
 # 切换角色 左移一位
 def changeLeftCharacter():
     global character
     character = (character + 5 - 1) % 5
+
 
 # 屏幕类
 class screenPlayer():
@@ -49,10 +52,10 @@ class screenPlayer():
         self.disp.bl_DutyCycle(50)
 
         # Create blank image for drawing.
-        image1 = Image.new("RGB", (self.disp.width,self.disp.height), "BLACK")
+        image1 = Image.new("RGB", (self.disp.width, self.disp.height), "BLACK")
         draw = ImageDraw.Draw(image1)
         # 按照舞台顺序
-        self.ball = ['Monster','Masa','Ashin','Stone','Ming']
+        self.ball = ['Monster', 'Masa', 'Ashin', 'Stone', 'Ming']
 
     def screenPlayer(self, character, mov, state):
         try:
@@ -66,25 +69,26 @@ class screenPlayer():
         self.disp.module_exit()
         logging.info("quit:")
 
-
-    '''A basic screen player， for a pink ball up and down'''
+    # 屏幕控制循环
     def screenController(self):
         try:
             global count
             count = 0
-            while (count >= 0):
+            while (True):
+                if count < 0:
+                    continue
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(i)
-                    self.screenPlayer(self.ball[character],'base',state)
+                    self.screenPlayer(self.ball[character], 'base', state)
                     time.sleep(sec)
                     if (i >= 2):
-                       sec = sec * 5
+                        sec = sec * 5
                     else:
                         sec = sec * 0.2
                 sec = 0.2
                 for i in range(5):
-                    state = 'D' + str(4-i)
+                    state = 'D' + str(4 - i)
                     self.screenPlayer(self.ball[character], 'base', state)
                     time.sleep(sec)
                     if (i >= 2):
@@ -101,15 +105,46 @@ class screenPlayer():
             logging.info("quit:")
             exit()
 
+
 class musicPlayer():
     def __init__(self):
         global musicIsStop
         musicIsStop = False
+        self.musicDict = {}
+        self.queue = []
         pygame.mixer.init()
+
+    # 初始化音乐目录
+    def logInit(self):
+        filenames = os.listdir('../music')
+        for filename in filenames:
+            number = ''
+            for ch in filename:
+                if ch == '.':
+                    break;
+                else:
+                    number += ch
+            self.musicDict[number] = filename
+            self.queue.append(number)
+
+    def playNext(self):
+        number = self.queue.pop()
+        pygame.mixer.music.stop()
+        musicPlayer('../music/'+self.musicDict[number])
 
     def musicPlayer(self, music):
         pygame.mixer.music.load(music)
         pygame.mixer.music.play()
+
+    def musicPlayerThread(self):
+        self.playNext()
+        global musicSwitch
+        while True:
+            if musicSwitch == True:
+                musicSwitch = False
+                self.playNext()
+
+
 
 class controller():
     def __init__(self):
@@ -138,12 +173,12 @@ class controller():
 
     def controllerThread(self):
         while True:
-           continue
+            continue
 
-    def keyCallback(self,key):
+    def keyCallback(self, key):
         if key == self.button_up:
             volume = pygame.mixer.music.get_volume()
-            pygame.mixer.music.set_volume(min(volume + 0.05,1))
+            pygame.mixer.music.set_volume(min(volume + 0.05, 1))
             print('提升音量')
         elif key == self.button_down:
             volume = pygame.mixer.music.get_volume()
@@ -169,14 +204,11 @@ class controller():
                 print('音乐继续')
         elif key == self.button_rst:
             print('rst')
-        
+
         time.sleep(1)
 
 
-
-
 if __name__ == "__main__":
-    
     c = controller()
     s = screenPlayer()
     '''s.screenController()'''
@@ -189,14 +221,12 @@ if __name__ == "__main__":
     st = '../music/五月天 - 你说那 C 和弦就是....mp3'
     s.count = 0
     screenController_thread = threading.Thread(target=s.screenController, args=())
-    musicPlayer_thread = threading.Thread(target=m.musicPlayer, args=(st,))
-    controller_thread = threading.Thread(target=c.controllerThread,args=())
+    musicPlayer_thread = threading.Thread(target=m.musicPlayerThread, args=())
+    controller_thread = threading.Thread(target=c.controllerThread, args=())
     controller_thread.start()
     screenController_thread.start()
     musicPlayer_thread.start()
-    #time.sleep(100)
-    #s.count = 100
+    # time.sleep(100)
+    # s.count = 100
     # m.isStop = True
     # m.musicStop()
-    
-    
