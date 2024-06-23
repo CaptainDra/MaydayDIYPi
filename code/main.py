@@ -13,11 +13,15 @@ sys.path.append("..")
 from lib import LCD_1inch28
 from PIL import Image,ImageDraw,ImageFont
 
-character = 0
+character = 2
 
-def changeCharacter():
+def changeRightCharacter():
     global character
-    character = (character + 1) % 3
+    character = (character + 1) % 5
+
+def changeLeftCharacter():
+    global character
+    character = (character + 5 - 1) % 5
 
 class screenPlayer():
     def __init__(self):
@@ -43,7 +47,8 @@ class screenPlayer():
         # Create blank image for drawing.
         image1 = Image.new("RGB", (self.disp.width,self.disp.height), "BLACK")
         draw = ImageDraw.Draw(image1)
-        self.ball = ['Ashin','Masa','Monster']
+        # 按照舞台顺序
+        self.ball = ['Monster','Masa','Ashin','Stone','Ming']
 
     def screenPlayer(self, character, mov, state):
         try:
@@ -106,7 +111,7 @@ class controller():
         GPIO.setmode(GPIO.BCM)
         self.button_up = 21
         self.button_down = 20
-        self.button_lift = 16
+        self.button_left = 16
         self.button_right = 19
         self.button_mid = 13
         self.button_set = 6
@@ -114,13 +119,13 @@ class controller():
         GPIO.setup(self.button_mid, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.button_down, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.button_up, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self.button_lift, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.button_left, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.button_right, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.button_set, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.button_rst, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.button_up, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
         GPIO.add_event_detect(self.button_down, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
-        GPIO.add_event_detect(self.button_lift, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
+        GPIO.add_event_detect(self.button_left, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
         GPIO.add_event_detect(self.button_right, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
         GPIO.add_event_detect(self.button_mid, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
         GPIO.add_event_detect(self.button_set, GPIO.FALLING, callback=self.keyCallback, bouncetime=200)
@@ -135,12 +140,13 @@ class controller():
             print('up')
         elif key == self.button_down:
             print('down')
-        elif key == self.button_lift:
-            print('lift')
+        elif key == self.button_left:
+            changeLeftCharacter()
+            print('left')
         elif key == self.button_right:
+            changeRightCharacter()
             print('right')
         elif key == self.button_mid:
-            changeCharacter()
             print('mid')
         elif key == self.button_set:
             print('set')
