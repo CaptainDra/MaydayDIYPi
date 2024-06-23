@@ -110,10 +110,6 @@ class musicPlayer():
     def musicPlayer(self, music):
         pygame.mixer.music.load(music)
         pygame.mixer.music.play()
-        while True:
-            if musicIsStop == False:
-                pygame.mixer.music.stop()
-                break;
 
 class controller():
     def __init__(self):
@@ -146,24 +142,31 @@ class controller():
 
     def keyCallback(self,key):
         if key == self.button_up:
-            print('up')
+            volume = pygame.mixer.music.get_volume()
+            pygame.mixer.music.set_volume(min(volume + 0.05,1))
+            print('提升音量')
         elif key == self.button_down:
-            print('down')
+            volume = pygame.mixer.music.get_volume()
+            pygame.mixer.music.set_volume(max(volume - 0.05, 0))
+            print('降低音量')
         elif key == self.button_left:
             changeLeftCharacter()
-            print('left')
+            print('左切视角')
         elif key == self.button_right:
             changeRightCharacter()
-            print('right')
+            print('右切视角')
         elif key == self.button_mid:
             print('mid')
         elif key == self.button_set:
             global count
-            count = -100
-            print(count)
-            global musicIsStop
-            musicIsStop = False
-            print('set')
+            if count < 0:
+                count = - 100
+                pygame.mixer.music.pause()
+                print('停止运动，音乐暂停')
+            else:
+                count = 0
+                pygame.mixer.music.play()
+                print('音乐继续')
         elif key == self.button_rst:
             print('rst')
         
