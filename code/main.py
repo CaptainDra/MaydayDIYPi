@@ -14,16 +14,21 @@ from lib import LCD_1inch28
 from PIL import Image,ImageDraw,ImageFont
 
 character = 2
-
+count = 0
+musicIsStop = False
+# 切换角色 右移一位
 def changeRightCharacter():
     global character
     character = (character + 1) % 5
 
+# 切换角色 左移一位
 def changeLeftCharacter():
     global character
     character = (character + 5 - 1) % 5
 
+# 屏幕类
 class screenPlayer():
+    # 初始化引脚设置
     def __init__(self):
         # Raspberry Pi pin configuration:
         RST = 27
@@ -31,7 +36,6 @@ class screenPlayer():
         BL = 18
         bus = 0
         device = 0
-        self.count = 0
         logging.basicConfig(level=logging.DEBUG)
         # display with hardware SPI:
         ''' Warning!!!Don't  creation of multiple displayer objects!!! '''
@@ -66,8 +70,9 @@ class screenPlayer():
     '''A basic screen player， for a pink ball up and down'''
     def screenController(self):
         try:
-
-            while (self.count < 100):
+            global count
+            count = 0
+            while (count >= 0):
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(i)
@@ -86,7 +91,7 @@ class screenPlayer():
                         sec = sec * 5
                     else:
                         sec = sec * 0.2
-                self.count += 1
+                count += 1
         except IOError as e:
             logging.info(e)
         except KeyboardInterrupt:
@@ -96,7 +101,8 @@ class screenPlayer():
 
 class musicPlayer():
     def __init__(self):
-        self.isStop = False
+        global musicIsStop
+        musicIsStop = False
         pygame.mixer.init()
 
     def musicPlayer(self, music):
@@ -104,7 +110,10 @@ class musicPlayer():
         pygame.mixer.music.play()
 
     def musicStop(self):
-        pygame.mixer.music.stop()
+        while True:
+            if musicIsStop == False:
+                pygame.mixer.music.stop()
+                break;
 
 class controller():
     def __init__(self):
@@ -149,6 +158,10 @@ class controller():
         elif key == self.button_mid:
             print('mid')
         elif key == self.button_set:
+            global count
+            count = -100
+            global musicIsStop
+            musicIsStop = False
             print('set')
         elif key == self.button_rst:
             print('rst')
@@ -177,9 +190,9 @@ if __name__ == "__main__":
     controller_thread.start()
     screenController_thread.start()
     musicPlayer_thread.start()
-    time.sleep(100)
-    s.count = 100
-    m.isStop = True
-    m.musicStop()
+    #time.sleep(100)
+    #s.count = 100
+    # m.isStop = True
+    # m.musicStop()
     
     
