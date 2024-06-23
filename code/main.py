@@ -118,22 +118,25 @@ class musicPlayer():
     def logInit(self):
         filenames = os.listdir('../music')
         for filename in filenames:
+            print(filename)
             number = ''
             for ch in filename:
                 if ch == '.':
                     break;
                 else:
                     number += ch
+            print(number)
             self.musicDict[number] = filename
             self.queue.append(number)
 
     def playNext(self):
         number = self.queue.pop()
         pygame.mixer.music.stop()
-        musicPlayer('../music/'+self.musicDict[number])
+        self.musicPlayer('../music/'+self.musicDict[number])
 
     def musicPlayer(self, music):
         pygame.mixer.music.load(music)
+        pygame.mixer.music.set_volume(0.2)
         pygame.mixer.music.play()
 
     def musicPlayerThread(self):
@@ -142,7 +145,10 @@ class musicPlayer():
         while True:
             if musicSwitch == True:
                 musicSwitch = False
+                print('next')
                 self.playNext()
+            time.sleep(1)
+            continue
 
 
 
@@ -178,11 +184,11 @@ class controller():
     def keyCallback(self, key):
         if key == self.button_up:
             volume = pygame.mixer.music.get_volume()
-            pygame.mixer.music.set_volume(min(volume + 0.05, 1))
+            pygame.mixer.music.set_volume(min(volume + 0.1, 1))
             print('提升音量')
         elif key == self.button_down:
             volume = pygame.mixer.music.get_volume()
-            pygame.mixer.music.set_volume(max(volume - 0.05, 0))
+            pygame.mixer.music.set_volume(max(volume - 0.1, 0))
             print('降低音量')
         elif key == self.button_left:
             changeLeftCharacter()
@@ -191,11 +197,13 @@ class controller():
             changeRightCharacter()
             print('右切视角')
         elif key == self.button_mid:
+            global musicSwitch
+            musicSwitch = True
             print('mid')
         elif key == self.button_set:
             global count
-            if count < 0:
-                count = - 100
+            if count >= 0:
+                count = -100
                 pygame.mixer.music.pause()
                 print('停止运动，音乐暂停')
             else:
@@ -211,14 +219,10 @@ class controller():
 if __name__ == "__main__":
     c = controller()
     s = screenPlayer()
-    '''s.screenController()'''
-    '''s.module_exit()'''
+
 
     m = musicPlayer()
-    '''m.musicPlayer('../music/五月天 - 你说那 C 和弦就是....mp3')
-    time.sleep(2)
-    m.musicStop()'''
-    st = '../music/五月天 - 你说那 C 和弦就是....mp3'
+    m.logInit()
     s.count = 0
     screenController_thread = threading.Thread(target=s.screenController, args=())
     musicPlayer_thread = threading.Thread(target=m.musicPlayerThread, args=())
