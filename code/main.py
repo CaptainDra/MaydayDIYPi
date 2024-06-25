@@ -29,6 +29,22 @@ def changeLeftCharacter():
     character = (character + 5 - 1) % 5
 
 
+def watch(var_name):
+    val = None
+
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            global val
+            global_val = globals()[var_name]
+            if global_val != val:
+                val = global_val
+                func(global_val, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
 # 屏幕类
 class screenPlayer():
     # 初始化引脚设置
@@ -146,6 +162,8 @@ class musicPlayer():
 
 
 
+
+
 class controller():
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
@@ -211,13 +229,7 @@ class controller():
 if __name__ == "__main__":
     c = controller()
     s = screenPlayer()
-    '''s.screenController()'''
-    '''s.module_exit()'''
-
     m = musicPlayer()
-    '''m.musicPlayer('../music/五月天 - 你说那 C 和弦就是....mp3')
-    time.sleep(2)
-    m.musicStop()'''
     st = '../music/五月天 - 你说那 C 和弦就是....mp3'
     s.count = 0
     screenController_thread = threading.Thread(target=s.screenController, args=())
@@ -226,7 +238,4 @@ if __name__ == "__main__":
     controller_thread.start()
     screenController_thread.start()
     musicPlayer_thread.start()
-    # time.sleep(100)
-    # s.count = 100
-    # m.isStop = True
-    # m.musicStop()
+
