@@ -38,7 +38,7 @@ class screenPlayer():
         BL = 18
         bus = 0
         device = 0
-        logging.basicConfig(level=logging.DEBUG)
+        # logging.basicConfig(level=logging.DEBUG)
         # display with hardware SPI:
         ''' Warning!!!Don't  creation of multiple displayer objects!!! '''
         # disp = LCD_1inch28.LCD_1inch28(spi=SPI.SpiDev(bus, device),spi_freq=10000000,rst=RST,dc=DC,bl=BL)
@@ -96,7 +96,7 @@ class screenPlayer():
                     else:
                         sec = sec * 0.2
 
-                print(count)
+                # print(count)
                 count += 1
         except IOError as e:
             logging.info(e)
@@ -113,6 +113,7 @@ class musicPlayer():
         self.musicDict = {}
         self.queue = []
         pygame.mixer.init()
+        self.index = 1
 
     # 初始化音乐目录
     def logInit(self):
@@ -130,9 +131,11 @@ class musicPlayer():
             self.queue.append(number)
 
     def playNext(self):
-        number = self.queue.pop()
+        # number = self.queue.pop()
+        number = self.index
         pygame.mixer.music.stop()
-        self.musicPlayer('../music/'+self.musicDict[number])
+        self.musicPlayer('../music/'+self.musicDict[str(number)])
+        self.index += 1
 
     def musicPlayer(self, music):
         pygame.mixer.music.load(music)
