@@ -15,6 +15,7 @@ from PIL import Image, ImageDraw, ImageFont
 character = 2
 count = 0
 musicSwitch = False
+musicName = ''
 
 
 # 切换角色 右移一位
@@ -65,6 +66,13 @@ class screenPlayer():
             logging.info(e)
 
     def showSongName(self):
+        image1 = Image.new("RGB", (self.disp.width, self.disp.height), "BLACK")
+        draw = ImageDraw.Draw(image1)
+        Font1 = ImageFont.truetype("../Font/Font01.ttf", 25)
+        Font2 = ImageFont.truetype("../Font/Font01.ttf", 35)
+        Font3 = ImageFont.truetype("../Font/Font02.ttf", 32)
+        text = musicName
+        draw.text((74, 150), text, fill="WHITE", font=Font3)
         return
 
     def module_exit(self):
@@ -142,6 +150,9 @@ class musicPlayer():
         number = self.index
         pygame.mixer.music.stop()
         self.musicPlayer('../music/'+self.musicDict[str(number)])
+        global musicName
+        musicName = self.musicDict[str(number)]
+        musicName = musicName.replace(str(number)+'.','')
         self.index += 1
 
     def musicPlayer(self, music):
@@ -218,8 +229,8 @@ class controller():
                 pygame.mixer.music.pause()
                 print('停止运动，音乐暂停')
             else:
-                count = 0
-                pygame.mixer.music.play()
+                count = 5
+                pygame.mixer.music.unpause()
                 print('音乐继续')
         elif key == self.button_rst:
             print('rst')
