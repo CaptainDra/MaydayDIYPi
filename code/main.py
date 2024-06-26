@@ -73,8 +73,9 @@ class screenPlayer():
         try:
             global count
             count = 0
-            while (True):
+            while True:
                 if count < 0:
+                    time.sleep(1)
                     continue
                 sec = 0.2
                 for i in range(5):
@@ -143,10 +144,7 @@ class musicPlayer():
                 musicSwitch = False
                 self.playNext()
 
-
-
-
-
+# 总按钮控制器
 class controller():
     screen = None
     music = None
@@ -195,7 +193,7 @@ class controller():
             print('右切视角')
         elif key == self.button_mid:
             self.midButtonCallback(self.music)
-            print('mid')
+            print('切换音乐')
         elif key == self.button_set:
             global count
             if count < 0:
@@ -208,7 +206,6 @@ class controller():
                 print('音乐继续')
         elif key == self.button_rst:
             print('rst')
-
         time.sleep(1)
 
     def midButtonCallback(self, musicController):
