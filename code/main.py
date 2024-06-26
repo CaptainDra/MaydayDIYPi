@@ -64,6 +64,9 @@ class screenPlayer():
         except IOError as e:
             logging.info(e)
 
+    def showSongName(self):
+        return
+
     def module_exit(self):
         self.disp.module_exit()
         logging.info("quit:")
@@ -77,6 +80,10 @@ class screenPlayer():
                 if count < 0:
                     time.sleep(1)
                     continue
+                if count < 5:
+                    count = 5
+                    self.showSongName()
+                    time.sleep(5)
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(i)
@@ -186,6 +193,7 @@ class controller():
             continue
 
     def keyCallback(self, key):
+        global count
         if key == self.button_up:
             volume = pygame.mixer.music.get_volume()
             pygame.mixer.music.set_volume(min(volume + 0.1, 1))
@@ -201,10 +209,10 @@ class controller():
             changeRightCharacter()
             print('右切视角')
         elif key == self.button_mid:
+            count = 0
             self.midButtonCallback(self.music)
             print('切换音乐')
         elif key == self.button_set:
-            global count
             if count >= 0:
                 count = -100
                 pygame.mixer.music.pause()
@@ -236,5 +244,6 @@ if __name__ == "__main__":
     controller_thread = threading.Thread(target=c.controllerThread, args=())
     controller_thread.start()
     screenController_thread.start()
+    m.playNext()
     #musicPlayer_thread.start()
 
