@@ -28,23 +28,6 @@ def changeLeftCharacter():
     global character
     character = (character + 5 - 1) % 5
 
-
-def watch(var_name):
-    val = None
-
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            global val
-            global_val = globals()[var_name]
-            if global_val != val:
-                val = global_val
-                func(global_val, *args, **kwargs)
-
-        return wrapper
-
-    return decorator
-
-
 # 屏幕类
 class screenPlayer():
     # 初始化引脚设置
@@ -165,6 +148,8 @@ class musicPlayer():
 
 
 class controller():
+    screen = None
+    music = None
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         self.button_up = 21
@@ -209,6 +194,7 @@ class controller():
             changeRightCharacter()
             print('右切视角')
         elif key == self.button_mid:
+            self.midButtonCallback(self.music)
             print('mid')
         elif key == self.button_set:
             global count
@@ -225,17 +211,20 @@ class controller():
 
         time.sleep(1)
 
+    def midButtonCallback(self, musicController):
+        musicController.playNext()
 
 if __name__ == "__main__":
     c = controller()
     s = screenPlayer()
     m = musicPlayer()
-    st = '../music/五月天 - 你说那 C 和弦就是....mp3'
+    c.screen = s
+    c.music = m
     s.count = 0
     screenController_thread = threading.Thread(target=s.screenController, args=())
-    musicPlayer_thread = threading.Thread(target=m.musicPlayerThread, args=())
+    #musicPlayer_thread = threading.Thread(target=m.musicPlayerThread, args=())
     controller_thread = threading.Thread(target=c.controllerThread, args=())
     controller_thread.start()
     screenController_thread.start()
-    musicPlayer_thread.start()
+    #musicPlayer_thread.start()
 
