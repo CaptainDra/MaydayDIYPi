@@ -71,8 +71,10 @@ class screenPlayer():
         Font1 = ImageFont.truetype("../Font/Font01.ttf", 25)
         Font2 = ImageFont.truetype("../Font/Font01.ttf", 35)
         Font3 = ImageFont.truetype("../Font/Font02.ttf", 32)
+        global musicName
         text = musicName
         draw.text((74, 150), text, fill="WHITE", font=Font3)
+        self.disp.ShowImage(image1)
         return
 
     def module_exit(self):
@@ -89,9 +91,10 @@ class screenPlayer():
                     time.sleep(1)
                     continue
                 if count < 5:
-                    count = 5
+                    count += 1
+                    time.sleep(1)
                     self.showSongName()
-                    time.sleep(5)
+                    continue
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(i)
@@ -153,6 +156,8 @@ class musicPlayer():
         global musicName
         musicName = self.musicDict[str(number)]
         musicName = musicName.replace(str(number)+'.','')
+        musicName = musicName.replace('.mp3','')
+        print(musicName)
         self.index += 1
 
     def musicPlayer(self, music):
