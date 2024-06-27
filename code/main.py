@@ -1,5 +1,6 @@
 # import chardet
 import os
+import queue
 import sys
 import time
 import logging
@@ -11,8 +12,10 @@ import RPi.GPIO as GPIO
 sys.path.append("..")
 from lib import LCD_1inch28
 from PIL import Image, ImageDraw, ImageFont
+from . import secretBase
 
 character = 2
+round = 0
 count = 0
 musicSwitch = False
 musicName = ''
@@ -21,7 +24,11 @@ musicName = ''
 # 切换角色 右移一位
 def changeRightCharacter():
     global character
-    character = (character + 1) % 5
+    global round
+    character = character + 1
+    if(character >= 5):
+        character = character % 5
+        round = round + 1
 
 
 # 切换角色 左移一位
@@ -29,20 +36,11 @@ def changeLeftCharacter():
     global character
     character = (character + 5 - 1) % 5
 
+
 # 屏幕类
 class screenPlayer():
     # 初始化引脚设置
     def __init__(self):
-        # Raspberry Pi pin configuration:
-        RST = 27
-        DC = 25
-        BL = 18
-        bus = 0
-        device = 0
-        # logging.basicConfig(level=logging.DEBUG)
-        # display with hardware SPI:
-        ''' Warning!!!Don't  creation of multiple displayer objects!!! '''
-        # disp = LCD_1inch28.LCD_1inch28(spi=SPI.SpiDev(bus, device),spi_freq=10000000,rst=RST,dc=DC,bl=BL)
         self.disp = LCD_1inch28.LCD_1inch28()
         # Initialize library.
         self.disp.Init()
@@ -50,12 +48,11 @@ class screenPlayer():
         self.disp.clear()
         # Set the backlight to 100
         self.disp.bl_DutyCycle(50)
-
         # Create blank image for drawing.
-        image1 = Image.new("RGB", (self.disp.width, self.disp.height), "BLACK")
-        draw = ImageDraw.Draw(image1)
         # 按照舞台顺序
         self.ball = ['Monster', 'Masa', 'Ashin', 'Stone', 'Ming']
+        # 想加表情，但是没有艺术细胞
+        self.action = [['base'],['base'],['base'],['base'],['base']]
 
     def screenPlayer(self, character, mov, state):
         try:
@@ -98,7 +95,8 @@ class screenPlayer():
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(i)
-                    self.screenPlayer(self.ball[character], 'base', state)
+                    num = len(self.action[character])
+                    self.screenPlayer(self.ball[character], self.action[character][round%num], state)
                     time.sleep(sec)
                     if (i >= 2):
                         sec = sec * 5
@@ -107,7 +105,8 @@ class screenPlayer():
                 sec = 0.2
                 for i in range(5):
                     state = 'D' + str(4 - i)
-                    self.screenPlayer(self.ball[character], 'base', state)
+                    num = len(self.action[character])
+                    self.screenPlayer(self.ball[character], self.action[character][round%num], state)
                     time.sleep(sec)
                     if (i >= 2):
                         sec = sec * 5
@@ -152,11 +151,11 @@ class musicPlayer():
         # number = self.queue.pop()
         number = self.index
         pygame.mixer.music.stop()
-        self.musicPlayer('../music/'+self.musicDict[str(number)])
+        self.musicPlayer('../music/' + self.musicDict[str(number)])
         global musicName
         musicName = self.musicDict[str(number)]
-        musicName = musicName.replace(str(number)+'.','')
-        musicName = musicName.replace('.mp3','')
+        musicName = musicName.replace(str(number) + '.', '')
+        musicName = musicName.replace('.mp3', '')
         print(musicName)
         self.index += 1
 
@@ -165,22 +164,19 @@ class musicPlayer():
         pygame.mixer.music.set_volume(0.2)
         pygame.mixer.music.play()
 
-    def musicPlayerThread(self):
+    # 重播才有的彩蛋哦
+    def musicReset(self):
+        self.index = 0
         self.playNext()
-        global musicSwitch
-        while True:
-            if musicSwitch == True:
-                musicSwitch = False
-                print('next')
-                self.playNext()
-            time.sleep(1)
-            continue
+
 
 # 总按钮控制器
 class controller():
     screen = None
     music = None
+
     def __init__(self):
+        self.record = queue.Queue()
         GPIO.setmode(GPIO.BCM)
         self.button_up = 21
         self.button_down = 20
@@ -214,20 +210,25 @@ class controller():
             volume = pygame.mixer.music.get_volume()
             pygame.mixer.music.set_volume(min(volume + 0.1, 1))
             print('提升音量')
+            self.record.put('8')
         elif key == self.button_down:
             volume = pygame.mixer.music.get_volume()
             pygame.mixer.music.set_volume(max(volume - 0.1, 0))
             print('降低音量')
+            self.record.put('2')
         elif key == self.button_left:
             changeLeftCharacter()
             print('左切视角')
+            self.record.put('4')
         elif key == self.button_right:
             changeRightCharacter()
             print('右切视角')
+            self.record.put('6')
         elif key == self.button_mid:
             count = 0
             self.midButtonCallback(self.music)
             print('切换音乐')
+            self.record.put('5')
         elif key == self.button_set:
             if count >= 0:
                 count = -100
@@ -237,29 +238,43 @@ class controller():
                 count = 5
                 pygame.mixer.music.unpause()
                 print('音乐继续')
+            self.record.put('1')
         elif key == self.button_rst:
+            elements = []
+            password = ''
+            while not self.record.empty():
+                elements.append(self.record.get())
+            for element in elements:
+                password += element
+                self.record.put(element)
+            print(password)
+            if secretBase.checkPassword(password):
+                secretBase.secretBase()
+            else:
+                self.rstButtonCallback(self.music)
             print('rst')
-
+            self.record.put('3')
+        if self.record.qsize() > 12:
+            self.record.get()
         time.sleep(1)
 
     def midButtonCallback(self, musicController):
         musicController.playNext()
 
+    def rstButtonCallback(self, musicController):
+        musicController.musicReset()
+
+
 if __name__ == "__main__":
     c = controller()
     s = screenPlayer()
-
-
     m = musicPlayer()
     m.logInit()
     c.screen = s
     c.music = m
     s.count = 0
     screenController_thread = threading.Thread(target=s.screenController, args=())
-    #musicPlayer_thread = threading.Thread(target=m.musicPlayerThread, args=())
     controller_thread = threading.Thread(target=c.controllerThread, args=())
     controller_thread.start()
     screenController_thread.start()
     m.playNext()
-    #musicPlayer_thread.start()
-
