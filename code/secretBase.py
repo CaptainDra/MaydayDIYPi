@@ -17,8 +17,9 @@ def printArray(arrays):
         print(array.replace('\n', ''))
 
 def secretBase():
-    return
     printArray(readTxt())
+    return
+    
 def checkPassword(pwd):
     password = '282288822282'
     if password == pwd:
