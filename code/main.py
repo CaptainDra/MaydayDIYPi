@@ -94,6 +94,8 @@ class screenPlayer():
                     continue
                 sec = 0.2
                 for i in range(5):
+                    if count < 5:
+                        continue
                     state = 'D' + str(i)
                     num = len(self.action[character])
                     self.screenPlayer(self.ball[character], self.action[character][round%num], state)
@@ -104,6 +106,8 @@ class screenPlayer():
                         sec = sec * 0.2
                 sec = 0.2
                 for i in range(5):
+                    if count < 5:
+                        continue
                     state = 'D' + str(4 - i)
                     num = len(self.action[character])
                     self.screenPlayer(self.ball[character], self.action[character][round%num], state)
@@ -140,7 +144,7 @@ class musicPlayer():
             number = ''
             for ch in filename:
                 if ch == '.':
-                    break;
+                    break
                 else:
                     number += ch
             print(number)
@@ -202,6 +206,10 @@ class controller():
 
     def controllerThread(self):
         while True:
+            # 检测是否在播放音乐然后自动播放
+            if not pygame.mixer.music.get_busy():
+                self.music.playNext()
+            time.sleep(0.1)
             continue
 
     def keyCallback(self, key):
