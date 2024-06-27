@@ -12,7 +12,7 @@ import RPi.GPIO as GPIO
 sys.path.append("..")
 from lib import LCD_1inch28
 from PIL import Image, ImageDraw, ImageFont
-from . import secretBase
+import secretBase
 
 character = 2
 round = 0
@@ -250,6 +250,8 @@ class controller():
             print(password)
             if secretBase.checkPassword(password):
                 secretBase.secretBase()
+                self.music.index = 99
+                self.midButtonCallback(self.music)
             else:
                 self.rstButtonCallback(self.music)
             print('rst')
