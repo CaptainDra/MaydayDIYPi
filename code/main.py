@@ -53,6 +53,7 @@ class screenPlayer():
         self.ball = ['Monster', 'Masa', 'Ashin', 'Stone', 'Ming']
         # 想加表情，但是没有艺术细胞
         self.action = [['base'],['base'],['base'],['base'],['base']]
+        self.arrays = []
 
     def screenPlayer(self, character, mov, state):
         try:
@@ -70,7 +71,18 @@ class screenPlayer():
         Font3 = ImageFont.truetype("../Font/Font02.ttf", 32)
         global musicName
         text = musicName
-        draw.text((74, 150), text, fill="WHITE", font=Font3)
+        draw.text((20, 120), text, fill="WHITE", font=Font3)
+        self.disp.ShowImage(image1)
+        return
+
+    def showSentence(self,s1,s2):
+        image1 = Image.new("RGB", (self.disp.width, self.disp.height), "BLACK")
+        draw = ImageDraw.Draw(image1)
+        Font1 = ImageFont.truetype("../Font/Font01.ttf", 25)
+        Font2 = ImageFont.truetype("../Font/Font01.ttf", 35)
+        Font3 = ImageFont.truetype("../Font/Font02.ttf", 32)
+        draw.text((50, 40), s1, fill="WHITE", font=Font3)
+        draw.text((80, 200), s2, fill="WHITE", font=Font3)
         self.disp.ShowImage(image1)
         return
 
@@ -84,6 +96,14 @@ class screenPlayer():
             global count
             count = 0
             while True:
+                if len(self.arrays) > 0:
+                    s1 = self.arrays.pop(0)
+                    s2 = ''
+                    if len(self.arrays) > 0:
+                        s2 = self.arrays.pop(0)
+                    self.showSentence(s1,s2)
+                    time.sleep(5)
+                    continue
                 if count < 0:
                     time.sleep(1)
                     continue
@@ -116,8 +136,6 @@ class screenPlayer():
                         sec = sec * 5
                     else:
                         sec = sec * 0.2
-
-                # print(count)
                 count += 1
         except IOError as e:
             logging.info(e)
@@ -165,7 +183,8 @@ class musicPlayer():
 
     def musicPlayer(self, music):
         pygame.mixer.music.load(music)
-        pygame.mixer.music.set_volume(0.2)
+        # 不自动设置音量
+        # pygame.mixer.music.set_volume(0.2)
         pygame.mixer.music.play()
 
     # 重播才有的彩蛋哦
@@ -207,7 +226,7 @@ class controller():
     def controllerThread(self):
         while True:
             # 检测是否在播放音乐然后自动播放
-            if not pygame.mixer.music.get_busy():
+            if not pygame.mixer.music.get_busy() & self.music.index < 40:
                 self.music.playNext()
             time.sleep(0.1)
             continue
@@ -257,7 +276,7 @@ class controller():
                 self.record.put(element)
             print(password)
             if secretBase.checkPassword(password):
-                secretBase.secretBase()
+                self.screen.arrays = secretBase.secretBase()
                 self.music.index = 99
                 self.midButtonCallback(self.music)
             else:
