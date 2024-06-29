@@ -147,8 +147,7 @@ class screenPlayer():
 
 class musicPlayer():
     def __init__(self):
-        global musicIsStop
-        musicIsStop = False
+        self.musicIsPause = False
         self.musicDict = {}
         self.queue = []
         pygame.mixer.init()
@@ -230,9 +229,12 @@ class controller():
             if pygame.mixer.music.get_busy():
                 time.sleep(1)
                 continue
+            elif self.music.musicIsPause == True:
+                time.sleep(1)
+                continue
             elif self.music.index < 40:
                 self.music.playNext()
-            time.sleep(1)
+                time.sleep(1)
             continue
 
     def keyCallback(self, key):
@@ -264,10 +266,12 @@ class controller():
             if count >= 0:
                 count = -100
                 pygame.mixer.music.pause()
+                self.music.musicIsPause = True
                 print('停止运动，音乐暂停')
             else:
                 count = 5
                 pygame.mixer.music.unpause()
+                self.music.musicIsPause = False
                 print('音乐继续')
             self.record.put('1')
         elif key == self.button_rst:
