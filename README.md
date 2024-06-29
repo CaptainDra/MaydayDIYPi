@@ -45,7 +45,10 @@ git clone https://github.com/CaptainDra/MaydayFansDemo.git
 cd MaydayFansDemo/code
 sudo python main.py
 ```
+设置开机自启动：    
+```
 
+```
 
 ## 相关链接    
 显示屏说明文档：[微雪L1.28](https://www.waveshare.net/wiki/1.28inch_Touch_LCD#.E8.BF.90.E8.A1.8C.E6.B5.8B.E8.AF.95.E7.A8.8B.E5.BA.8F)       
