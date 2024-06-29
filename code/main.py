@@ -152,6 +152,7 @@ class musicPlayer():
         self.musicDict = {}
         self.queue = []
         pygame.mixer.init()
+        pygame.mixer.music.set_volume(0.2)
         self.index = 1
 
     # 初始化音乐目录
@@ -226,9 +227,12 @@ class controller():
     def controllerThread(self):
         while True:
             # 检测是否在播放音乐然后自动播放
-            if not pygame.mixer.music.get_busy() & self.music.index < 40:
+            if pygame.mixer.music.get_busy():
+                time.sleep(1)
+                continue
+            elif self.music.index < 40:
                 self.music.playNext()
-            time.sleep(0.1)
+            time.sleep(1)
             continue
 
     def keyCallback(self, key):
@@ -306,4 +310,4 @@ if __name__ == "__main__":
     controller_thread = threading.Thread(target=c.controllerThread, args=())
     controller_thread.start()
     screenController_thread.start()
-    m.playNext()
+
