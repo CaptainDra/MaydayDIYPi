@@ -70,10 +70,10 @@ class screenPlayer():
         Font2 = ImageFont.truetype("../Font/Font01.ttf", 35)
         Font3 = ImageFont.truetype("../Font/Font02.ttf", 32)
         global musicName
-        if len(musicName) > 6:
-            text1 = musicName[0,6]
+        if len(musicName) > 8:
+            text1 = musicName[0:8]
             text2 = musicName.replace(text1,'')
-            draw.text((30, 110), text1, fill="WHITE", font=Font3)
+            draw.text((30, 90), text1, fill="WHITE", font=Font3)
             draw.text((30, 130), text2, fill="WHITE", font=Font3)
         else:
             text = musicName
@@ -87,8 +87,8 @@ class screenPlayer():
         Font1 = ImageFont.truetype("../Font/Font01.ttf", 25)
         Font2 = ImageFont.truetype("../Font/Font01.ttf", 35)
         Font3 = ImageFont.truetype("../Font/Font02.ttf", 32)
-        draw.text((50, 40), s1, fill="WHITE", font=Font3)
-        draw.text((80, 200), s2, fill="WHITE", font=Font3)
+        draw.text((30, 90), s1, fill="WHITE", font=Font3)
+        draw.text((30, 130), s2, fill="WHITE", font=Font3)
         self.disp.ShowImage(image1)
         return
 
@@ -247,12 +247,18 @@ class controller():
         global count
         if key == self.button_up:
             volume = pygame.mixer.music.get_volume()
-            pygame.mixer.music.set_volume(min(volume + 0.1, 1))
+            if volume < 0.1:
+                pygame.mixer.music.set_volume(0.1)
+            else:
+                pygame.mixer.music.set_volume(min(volume + 0.1, 1))
             print('提升音量')
             self.record.put('8')
         elif key == self.button_down:
             volume = pygame.mixer.music.get_volume()
-            pygame.mixer.music.set_volume(max(volume - 0.1, 0))
+            if volume <= 0.1:
+                pygame.mixer.music.set_volume(volume/2)
+            else:
+                pygame.mixer.music.set_volume(max(volume - 0.1, 0))
             print('降低音量')
             self.record.put('2')
         elif key == self.button_left:
