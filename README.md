@@ -65,6 +65,11 @@ StartupNotify=true
 ```
 P.S.:这样自动启动进程需要通过杀进程方式来关闭
 
+## 模块说明
+### 显示模块
+### 音乐模块
+### 控制模块
+
 ## 相关链接    
 显示屏说明文档：[微雪L1.28](https://www.waveshare.net/wiki/1.28inch_Touch_LCD#.E8.BF.90.E8.A1.8C.E6.B5.8B.E8.AF.95.E7.A8.8B.E5.BA.8F)       
 

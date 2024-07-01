@@ -55,6 +55,7 @@ class screenPlayer():
         self.action = [['base'],['base'],['base'],['base'],['base']]
         self.arrays = []
 
+    # 读取图片
     def screenPlayer(self, character, mov, state):
         try:
             imageLoc = '../pic/' + character + '/' + mov + state + '.png'
@@ -62,7 +63,7 @@ class screenPlayer():
             self.disp.ShowImage(image)
         except IOError as e:
             logging.info(e)
-    # 如果歌名过长需要换行
+    # 写歌名，如果歌名过长需要换行
     def showSongName(self):
         image1 = Image.new("RGB", (self.disp.width, self.disp.height), "BLACK")
         draw = ImageDraw.Draw(image1)
@@ -81,6 +82,7 @@ class screenPlayer():
         self.disp.ShowImage(image1)
         return
 
+    # 展示歌词
     def showSentence(self,s1,s2):
         image1 = Image.new("RGB", (self.disp.width, self.disp.height), "BLACK")
         draw = ImageDraw.Draw(image1)
@@ -92,6 +94,7 @@ class screenPlayer():
         self.disp.ShowImage(image1)
         return
 
+    # 退出并关闭
     def module_exit(self):
         self.disp.module_exit()
         logging.info("quit:")
