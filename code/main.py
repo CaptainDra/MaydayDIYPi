@@ -259,7 +259,10 @@ class controller():
         elif key == self.button_down:
             volume = pygame.mixer.music.get_volume()
             if volume <= 0.1:
-                pygame.mixer.music.set_volume(volume/2)
+                if volume <= 0.01:
+                    pygame.mixer.music.set_volume(0)
+                else:
+                    pygame.mixer.music.set_volume(volume/2)
             else:
                 pygame.mixer.music.set_volume(max(volume - 0.1, 0))
             print('降低音量')
