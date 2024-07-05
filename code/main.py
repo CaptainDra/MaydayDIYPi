@@ -234,7 +234,7 @@ class controller():
 
     def controllerThread(self):
         while True:
-            # 检测是否在播放音乐然后自动播放
+            # 检测是否在播放音乐然后自动播放下一个
             if pygame.mixer.music.get_busy():
                 time.sleep(1)
                 continue
@@ -242,6 +242,10 @@ class controller():
                 time.sleep(1)
                 continue
             elif self.music.index < 40:
+                self.music.playNext()
+                time.sleep(1)
+            elif self.music.index >= 40:
+                self.music.index = 1
                 self.music.playNext()
                 time.sleep(1)
             continue
