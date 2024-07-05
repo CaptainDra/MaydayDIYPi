@@ -74,11 +74,11 @@ class screenPlayer():
         if len(musicName) > 8:
             text1 = musicName[0:8]
             text2 = musicName.replace(text1,'')
-            draw.text((30, 90), text1, fill="WHITE", font=Font3)
-            draw.text((30, 130), text2, fill="WHITE", font=Font3)
+            draw.text((20, 90), text1, fill="WHITE", font=Font3)
+            draw.text((20, 130), text2, fill="WHITE", font=Font3)
         else:
             text = musicName
-            draw.text((30, 130), text, fill="WHITE", font=Font3)
+            draw.text((20, 130), text, fill="WHITE", font=Font3)
         self.disp.ShowImage(image1)
         return
 
@@ -89,8 +89,8 @@ class screenPlayer():
         Font1 = ImageFont.truetype("../Font/Font01.ttf", 25)
         Font2 = ImageFont.truetype("../Font/Font01.ttf", 35)
         Font3 = ImageFont.truetype("../Font/Font02.ttf", 32)
-        draw.text((30, 90), s1, fill="WHITE", font=Font3)
-        draw.text((30, 130), s2, fill="WHITE", font=Font3)
+        draw.text((20, 90), s1, fill="WHITE", font=Font3)
+        draw.text((20, 130), s2, fill="WHITE", font=Font3)
         self.disp.ShowImage(image1)
         return
 
