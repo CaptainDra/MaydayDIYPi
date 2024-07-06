@@ -247,7 +247,7 @@ class controller():
             elif self.music.index >= 40:
                 self.music.index = 1
                 self.music.playNext()
-                time.sleep(1)
+                time.sleep(10)
             continue
 
     def keyCallback(self, key):
