@@ -1,6 +1,6 @@
 # MaydayFansDemo
 一个五月天相关的树莓派实验品    
-目前进度：整体完成，正在细节调试中    
+目前进度：整体完成，正在细节调试中/画动画表情中    
 ## 材料准备    
 树莓派 * 1     
 树莓派可接圆屏（触摸功能未来可能会用上）（可直接电商平台搜索单片机 圆屏，建议官方购买，比较便宜） * 1     
@@ -8,6 +8,13 @@ USB音响 * 1
 按钮 * 1（支持上下左右中键以及set和rst按钮）    
 
 ## 使用    
+### 开启SPI与I2C接口（不然会报错找不到端口/文件）    
+```
+sudo raspi-config
+Interfacing Options -> SPI -> Yes
+Interfacing Options -> I2C -> Yes
+```
+
 ### 安装屏幕运行库：
 这里建议用Python3，因为其他代码里用到了2和3不一样的语法    
 ```
@@ -33,6 +40,11 @@ sudo apt-get install python3-numpy
 sudo pip3 install RPi.GPIO
 sudo pip3 install smbus
 sudo pip3 install spidev
+
+# 最新版树莓派如果安装包报错请参考以下命令
+sudo apt install python3-RPi.GPIO
+sudo apt install python3-smbus
+sudo apt install python3-spidev
 ```
 
 
