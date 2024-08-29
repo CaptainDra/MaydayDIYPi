@@ -208,6 +208,7 @@ class controller():
     music = None
 
     def __init__(self):
+        # 按钮接线参考如下配置
         self.record = queue.Queue()
         GPIO.setmode(GPIO.BCM)
         self.button_up = 21
