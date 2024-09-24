@@ -1,7 +1,6 @@
 import time
 
 
-
 # .-..---...-.
 def readTxt():
     arrays = []
@@ -26,6 +25,20 @@ def checkPassword(pwd):
         return True
     else:
         return False
+
+# LRC歌词读取
+def readLRC(songName):
+    f = open(songName+'.txt', 'r', encoding='utf-8')
+    # f = open('青空未来.txt', 'r', encoding='utf-8')
+    lrcLines = f.readlines()
+    dict = {}
+    for line in lrcLines:
+        # 时间格式默认为[mm:ss.ss]格式
+        time = line[1:9]
+        str = line[10:].replace('\n', '')
+        dict[time] = str
+    return dict
+
 
 if __name__ == '__main__':
     printArray(readTxt())
